@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="dash.css">
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script>
+        const firebaseConfig = {
+            databaseURL: "https://loginuserblack-default-rtdb.firebaseio.com/"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+    </script>
+</head>
+<body>
+    <div class="header">
+        <button class="menuButton" id="menuToggle">&#9776;</button>
+        <h1 id="welcomeMessage"></h1>
+        <button id="signOut" class="signOutButton">Sign Out</button>
+    </div>
+
+    <div class="sidebar" id="sidebarMenu">
+        <a href="#">Openstaande Reports</a>
+        <a href="#">Afgehandelde Reports</a>
+        <a href="#">Werknemers</a>
+        <a href="./dashboard.html">Terug Naar Home</a>
+    </div>
+ 
+    <div class="dashboard-container">
+        <div class="employee-management-container">
+            <h2>Medewerker Accounts</h2>
+            <form id="employeeForm">
+                <input type="text" id="employeeUsername" placeholder="Gebruikersnaam" required>
+                <input type="password" id="employeePassword" placeholder="Wachtwoord" required>
+                <button type="submit">Account Aanmaken</button>
+            </form>
+            <h3>Huidige Medewerkers</h3>
+            <ul id="employeeList"></ul>
+        </div>
+    </div>
+
+    <script>
+        const username = localStorage.getItem('username');
+
+        if (!username) {
+            window.location.href = 'index.html';
+        } else {
+            document.getElementById('welcomeMessage').textContent = `Welkom ${username}`;
+        }
+
+        document.getElementById('signOut').addEventListener('click', () => {
+            localStorage.removeItem('username');
+            window.location.href = 'index.html';
+        });
+
+        document.getElementById('menuToggle').addEventListener('click', () => {
+            const sidebar = document.getElementById('sidebarMenu');
+            sidebar.classList.toggle('open');
+            document.querySelector('.dashboard-container').classList.toggle('shift');
+        });
+
+        const employeeForm = document.getElementById('employeeForm');
+        const employeeList = document.getElementById('employeeList');
+
+        // Function to add employee to Firebase
+        employeeForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('employeeUsername').value;
+            const password = document.getElementById('employeePassword').value;
+
+            await database.ref('users/' + username).set({
+                password: password
+            });
+
+            document.getElementById('employeeUsername').value = '';
+            document.getElementById('employeePassword').value = '';
+        });
+
+        // Function to fetch and display employees
+        function fetchEmployees() {
+            database.ref('users').on('value', (snapshot) => {
+                const employees = snapshot.val();
+                employeeList.innerHTML = '';
+                for (const username in employees) {
+                    const employee = employees[username];
+                    const li = document.createElement('li');
+                    li.textContent = `${username}`;
+                    const deleteButton = document.createElement('button');
+                    deleteButton.textContent = '✖';
+                    deleteButton.classList.add('deleteButton');
+                    deleteButton.addEventListener('click', () => deleteEmployee(username));
+                    li.appendChild(deleteButton);
+                    employeeList.appendChild(li);
+                }
+            });
+        }
+
+        // Function to delete employee from Firebase
+        function deleteEmployee(username) {
+            database.ref(`users/${username}`).remove();
+        }
+
+        fetchEmployees();
+    </script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Management</title>
+    <link rel="stylesheet" href="employee.css">
+</head>
+<body>
+    <div class="header">
+        <button class="menuButton" id="menuToggle">&#9776;</button>
+        <h1>Employee Management</h1>
+        <button id="signOut" class="signOutButton">Sign Out</button>
+    </div>
+
+    <div class="sidebar" id="sidebarMenu">
+        <a href="dashboard.html">Dashboard</a>
+        <a href="#">Openstaande Reports</a>
+        <a href="#">Afgehandelde Reports</a>
+        <a href="#">Werknemers</a>
+    </div>
+
+    <div class="dashboard-container">
+        <div class="employee-panel">
+            <h2>Create New Employee</h2>
+            <form id="employeeForm">
+                <input type="text" id="employeeName" placeholder="Employee Name" required>
+                <input type="email" id="employeeEmail" placeholder="Employee Email" required>
+                <button type="submit">Add Employee</button>
+            </form>
+        </div>
+
+        <div class="employee-list">
+            <h2>Employee List</h2>
+            <ul id="employeeList">Loading...</ul>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js"></script>
+
+    <script>
+        // Your Firebase configuration
+        const firebaseConfig = {
+            databaseURL: 'https://loginuserblack-default-rtdb.firebaseio.com/',
+            // You should include other Firebase config values as well
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // Reference to the employees in Firebase
+        const employeesRef = database.ref('employees');
+
+        // DOM elements
+        const employeeForm = document.getElementById('employeeForm');
+        const employeeNameInput = document.getElementById('employeeName');
+        const employeeEmailInput = document.getElementById('employeeEmail');
+        const employeeList = document.getElementById('employeeList');
+
+        // Add employee
+        employeeForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = employeeNameInput.value;
+            const email = employeeEmailInput.value;
+            const newEmployeeRef = employeesRef.push();
+            newEmployeeRef.set({
+                name: name,
+                email: email
+            });
+
+            employeeNameInput.value = '';
+            employeeEmailInput.value = '';
+        });
+
+        // Remove employee
+        function removeEmployee(employeeId) {
+            employeesRef.child(employeeId).remove();
+        }
+
+        // Display employees
+        employeesRef.on('value', (snapshot) => {
+            employeeList.innerHTML = '';
+            snapshot.forEach(childSnapshot => {
+                const employeeId = childSnapshot.key;
+                const employeeData = childSnapshot.val();
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `
+                    ${employeeData.name} (${employeeData.email})
+                    <button onclick="removeEmployee('${employeeId}')" class="removeButton">✖</button>
+                `;
+                employeeList.appendChild(listItem);
+            });
+        });
+
+        // Sign out functionality
+        document.getElementById('signOut').addEventListener('click', () => {
+            localStorage.removeItem('username');
+            window.location.href = 'index.html';
+        });
+
+        // Menu toggle functionality
+        document.getElementById('menuToggle').addEventListener('click', () => {
+            const sidebar = document.getElementById('sidebarMenu');
+            sidebar.classList.toggle('open');
+            document.querySelector('.dashboard-container').classList.toggle('shift');
+        });
+    </script>
+</body>
+</html>
