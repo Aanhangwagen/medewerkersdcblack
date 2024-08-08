@@ -132,7 +132,7 @@ body::before {
     text-align: center;
 }
 
-/* Title and content styling *
+/* Title and content styling */
 .card-title, .latest-report-title {
     font-size: 14px;
     color: #666; /* Light gray for the title */
