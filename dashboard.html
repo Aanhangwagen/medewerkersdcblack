@@ -10,7 +10,7 @@
     <div class="header">
         <button class="menuButton" id="menuToggle">&#9776;</button>
         <h1 id="welcomeMessage"></h1>
-        <button id="signOut" class="signOutButton">Sign Out</button>
+        <button id="signOut" class="signOutButton">Uitloggen</button>
     </div>
 
     <div class="sidebar" id="sidebarMenu">
@@ -39,7 +39,7 @@
         if (!username) {
             window.location.href = 'login.html';
         } else {
-            document.getElementById('welcomeMessage').textContent = `Welkom ${username}`;
+            document.getElementById('welcomeMessage').textContent = `Welkom! ${username}`;
         }
 
         document.getElementById('signOut').addEventListener('click', () => {

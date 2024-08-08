@@ -8,12 +8,13 @@ body {
 }
 
 /* Header styling */
+/* Header styling */
 .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 10px 20px;
-    background-color: #007bff;
+    background: linear-gradient(to right, #003366, #00ffb3); /* Gradient from dark blue to light blue */
     color: white;
     position: fixed;
     width: 100%;
@@ -35,19 +36,29 @@ body::before {
 }
 
 .menuButton {
-    background-color: #007bff;
-    color: white;
-    border: none;
+    background-color: transparent; /* Completely transparent background */
+    color: #007bff; /* Text color */
+    border: none; /* Remove any border */
     padding: 10px;
-    border-radius: 50%;
+    border-radius: 50%; /* Keeps the button shape, can be removed if not needed */
     cursor: pointer;
     font-size: 20px;
+    outline: none; /* Remove the outline to prevent default focus styling */
 }
 
+/* Optional: Add a hover effect if needed */
+.menuButton:hover {
+    color: #0056b3; /* Change text color on hover */
+}
+
+
+
+
 .signOutButton {
-    background-color: #dc3545; /* Red background */
+    background-color: #5c5970; /* Red background */
     color: white; /* White text */
     border: none;
+    font-weight: bold;
     padding: 10px 20px;
     border-radius: 8px; /* Smooth corners */
     cursor: pointer;
