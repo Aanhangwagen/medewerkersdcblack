@@ -15,6 +15,19 @@
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
+
+        // Password Authentication
+        const correctPassword = "Hogxeu72691op";  // Replace with your desired password
+
+        function checkPassword() {
+            const enteredPassword = prompt("Vul het wachtwoord in om in het medewerkers account paneel te komen");
+            if (enteredPassword !== correctPassword) {
+                alert("Verkeerde wachtwoord.");
+                window.location.href = 'dashboard.html';  // Redirect to another page if the password is incorrect
+            }
+        }
+
+        window.onload = checkPassword;
     </script>
 </head>
 <body>
@@ -30,7 +43,7 @@
         <a href="#">Werknemers</a>
         <a href="./dashboard.html">Terug Naar Home</a>
     </div>
- 
+
     <div class="dashboard-container">
         <div class="employee-management-container">
             <h2>Medewerker Accounts</h2>
